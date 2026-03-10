@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               String         @id @default(cuid())
+  name             String?
+  email            String         @unique
+  password         String?
+  conversations    Conversation[]
+  createdAt        DateTime       @default(now())
+  emailVerified    Boolean        @default(false)
+  twoFactorEnabled Boolean        @default(false)
+  image            String?
+  updatedAt        DateTime       @updatedAt
+  sessions         Session[]
+  accounts         Account[]
+  twofactors       TwoFactor[]
+
+  @@map("user")
+}
+
+model Conversation {
+  id           String          @id @default(cuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id])
+  title        String?
+  originalText String
+  sourceType   String          @default("paste")
+  status       String          @default("pending")
+  wordCount    Int             @default(0)
+  messages     Message[]
+  report       AnalysisReport?
+  createdAt    DateTime        @default(now())
+}
+
+model Message {
+  id             String         @id @default(cuid())
+  conversationId String
+  conversation   Conversation   @relation(fields: [conversationId], references: [id])
+  speaker        String
+  content        String
+  messageIndex   Int
+  flags          AnalysisFlag[]
+}
+
+model AnalysisReport {
+  id                    String       @id @default(cuid())
+  conversationId        String       @unique
+  conversation          Conversation @relation(fields: [conversationId], references: [id])
+  sentimentScore        Float
+  healthScore           Int
+  toneSummary           String
+  emotionalSignals      String
+  redFlags              String
+  communicationPatterns String
+  aiSummary             String
+  createdAt             DateTime     @default(now())
+}
+
+model AnalysisFlag {
+  id              String  @id @default(cuid())
+  messageId       String
+  message         Message @relation(fields: [messageId], references: [id])
+  flagType        String
+  explanation     String
+  confidenceScore Float
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model TwoFactor {
+  id          String @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("twoFactor")
+}
