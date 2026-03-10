@@ -1,0 +1,64 @@
+# Implementation Plan: AI Conversation Analyzer
+
+An AI-powered communication coach web application to analyze raw text conversations to detect tone, sentiment, communication patterns, and behavioral signals. Built with Next.js 15, Better Auth, Prisma, Turso DB, and Gemini API.
+
+## Goal Description
+
+Build the MVP of an AI Conversation Analyzer. Users can log in (with 2FA), paste chat transcripts, and the system uses Gemini to parse and flag communications (e.g., passive aggression, emotional manipulation). Resulting analysis will be displayed on a dashboard and detailed view.
+
+## Proposed Architecture
+
+### 1. Database Schema & ORM
+- Prisma Schema with `User`, `Conversation`, `Message`, `AnalysisReport`, and `AnalysisFlag`.
+- Hosted on Turso DB (SQLite) for easy deployment and migration.
+
+### 2. UI / UX Layout
+- **Global:** Navigation bar, dark mode toggle. Responsive using Tailwind + shadcn/ui.
+- **Dashboard:** Grid of previous conversation cards with health score badges.
+- **Upload:** Large textarea for raw text input.
+- **Analysis View:** Two columns (chat transcript with highlight flags vs AI report dashboard).
+
+### 3. Authentication Flow
+- Implementation using `better-auth`.
+- Email/Password login.
+- Two-factor authentication (TOTP) and backup recovery codes.
+
+### 4. Conversation Parser and AI Integration
+- Parser to convert `Speaker: Message` block into structured messages.
+- Async server action firing a request to `gemini-2.5-flash` with structured JSON output prompts.
+
+## Proposed Steps Execution
+These steps correspond exactly to [task.md](file:///C:/Users/Lenovo%20Gaming/.gemini/antigravity/brain/739f1ad1-1e36-4aba-8e8d-9b28712b822a/task.md).
+
+### Step 1: Initialization & DB Schema
+- Initialize Shadcn UI environment.
+- Setup Prisma ORM and apply initial Turso DB migration.
+- Basic Next.js setup mapping.
+
+### Step 2: Authentication (Better Auth)
+- Integrate Better Auth for credentials logic.
+- Implement TOTP 2FA flow.
+
+### Step 3: Global UI & Dashboard
+- Global navigation layout.
+- Mock Dashboard page.
+
+### Step 4: Parser & Upload UI
+- `conversations/upload` route.
+- Regex/splitter logic for the text transcript.
+
+### Step 5: Gemini API & DB logic
+- Submit logic to handle processing state.
+- Service for asynchronous AI calls via @google/generative-ai.
+
+### Step 6: Detailed Analysis View
+- UI for `/conversations/[id]`.
+- Map flags to messages, handle error states.
+
+## Verification Plan
+### Automated Tests
+- None strictly requested, but we will test AI parser logic.
+### Manual Verification
+- Testing user registration / 2FA.
+- Testing conversation parser with dummy strings.
+- Deploying and checking latency/asynchronous processing of the prompt to Gemini.
