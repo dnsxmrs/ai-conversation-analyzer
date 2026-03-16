@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 
 export async function signInAction(values: { email: string; password: string; rememberMe: boolean }) {
     const { email, password, rememberMe } = values;
-    
+
     try {
         const response = await auth.api.signInEmail({
             body: {
@@ -15,7 +15,7 @@ export async function signInAction(values: { email: string; password: string; re
             },
             headers: await headers(),
         });
-        
+
         return { success: true, data: response };
     } catch (e: unknown) {
         const error = e as Error;
@@ -25,7 +25,7 @@ export async function signInAction(values: { email: string; password: string; re
 
 export async function signUpAction(values: { email: string; password: string; name: string; rememberMe: boolean }) {
     const { email, password, name, rememberMe } = values;
-    
+
     try {
         const response = await auth.api.signUpEmail({
             body: {
@@ -35,12 +35,12 @@ export async function signUpAction(values: { email: string; password: string; na
             },
             headers: await headers(),
         });
-        
-        // If rememberMe is true, we might want to extend the session 
+
+        // If rememberMe is true, we might want to extend the session
         // in a real-world scenario, but Better Auth handles registration auto-sign-in
         // with default session settings.
         console.log("Registered with rememberMe:", rememberMe);
-        
+
         return { success: true, data: response };
     } catch (e: unknown) {
         const error = e as Error;

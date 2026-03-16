@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { signUpAction } from "@/app/_actions/auth";
 
-export default function RegisterClient() {
+export default function SignUpClient() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -20,7 +20,7 @@ export default function RegisterClient() {
     const [error, setError] = useState("");
     const router = useRouter();
 
-    const handleRegister = async (e: React.FormEvent) => {
+    const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError("");
@@ -49,7 +49,7 @@ export default function RegisterClient() {
                 </div>
             )}
 
-            <form onSubmit={handleRegister} className="space-y-5 relative">
+            <form onSubmit={handleSignUp} className="space-y-5 relative">
                 <div className="space-y-2">
                     <Label htmlFor="name" className="text-zinc-700 dark:text-zinc-300">Full Name</Label>
                     <Input

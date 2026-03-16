@@ -131,7 +131,7 @@ export default function Home() {
 
             {/* CTAs — pill-shaped, rhyming the eyebrow badge */}
             <div className="fade-in-4 flex flex-col sm:flex-row items-start gap-3 w-full sm:w-auto">
-              <Link href="/register">
+              <Link href="/sign-up">
                 <button className="flex items-center justify-center rounded-full px-7 h-13 py-3.5 text-[14px] font-semibold gap-2 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0">
                   Analyze a conversation
                   <ArrowRight className="w-4 h-4" />

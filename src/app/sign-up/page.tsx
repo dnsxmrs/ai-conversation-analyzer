@@ -1,6 +1,6 @@
 import Link from "next/link";
 import CanvasBackground from "@/components/CanvasBackground";
-import RegisterClient from "./sign-up-client";
+import SignUpClient from "./sign-up-client";
 
 export default function SignUpPage() {
     return (
@@ -24,7 +24,7 @@ export default function SignUpPage() {
                         </p>
                     </div>
 
-                    <RegisterClient />
+                    <SignUpClient />
 
                     <div className="mt-8 pt-8 text-sm text-center lg:text-left text-zinc-600 dark:text-zinc-400 border-t border-zinc-200 dark:border-zinc-800/50">
                         Already have an account?{" "}

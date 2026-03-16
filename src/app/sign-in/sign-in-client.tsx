@@ -172,7 +172,7 @@ export default function SignInClient() {
             {step === "sign-in" && (
                 <div className="mt-8 pt-8 text-sm text-center lg:text-left text-zinc-600 dark:text-zinc-400 border-t border-zinc-200 dark:border-zinc-800/50">
                     Don&apos;t have an account?{" "}
-                    <Link href="/register" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 font-semibold transition-colors">
+                    <Link href="/sign-up" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 font-semibold transition-colors">
                         Sign up
                     </Link>
                 </div>
