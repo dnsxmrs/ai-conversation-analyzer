@@ -21,8 +21,8 @@ export function Navbar() {
 
                 <div className="flex items-center gap-2">
                     <ThemeToggle />
-                    {pathname !== "/login" && pathname !== "/register" && (
-                        <Link href="/login" className={buttonVariants({ size: "sm" })}>
+                    {pathname !== "/sign-in" && pathname !== "/register" && (
+                        <Link href="/sign-in" className={buttonVariants({ size: "sm" })}>
                             Sign In
                         </Link>
                     )}

@@ -302,7 +302,7 @@ export default function TwoFactorPage() {
                 <div>
                     <p className="text-sm text-muted-foreground mb-4">
                         Two-factor authentication adds an additional layer of security to your account by
-                        requiring a code from your authenticator app during login.
+                        requiring a code from your authenticator app during sign-in.
                     </p>
                     <Button onClick={openEnableDialog}>
                         <ShieldCheck className="size-4 mr-1" />

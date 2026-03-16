@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 
-const authPages = ["/login", "/register"];
-const publicPrefixes = ["/api/auth", "/login", "/register"];
+const authPages = ["/sign-in", "/sign-up"];
+const publicPrefixes = ["/api/auth", "/sign-in", "/sign-up"];
 
 const isStaticAsset = (pathname: string) => /\.[^/]+$/.test(pathname);
 
@@ -18,7 +18,7 @@ export async function proxy(request: NextRequest) {
 
     // Automatically redirect landing page to sign-in
     // if (pathname === "/") {
-    //     return NextResponse.redirect(new URL("/login", request.url));
+    //     return NextResponse.redirect(new URL("/sign-in", request.url));
     // }
 
     if (pathname.startsWith("/api/auth")) {

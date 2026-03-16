@@ -58,7 +58,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
     const handleSignOut = async () => {
         await authClient.signOut();
-        router.push("/login");
+        router.push("/sign-in");
     };
 
     if (isPending) {
@@ -70,7 +70,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     }
 
     if (!session?.user) {
-        router.push("/login");
+        router.push("/sign-in");
         return null;
     }
 
