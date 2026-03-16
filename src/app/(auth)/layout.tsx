@@ -9,9 +9,12 @@ import {
     Settings,
     LogOut,
     ChevronsUpDown,
+    Moon,
+    Sun,
+    Monitor,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { useTheme } from "next-themes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     Sidebar,
@@ -35,6 +38,9 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
@@ -48,6 +54,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     const { data: session, isPending } = authClient.useSession();
     const pathname = usePathname();
     const router = useRouter();
+    const { setTheme } = useTheme();
 
     const handleSignOut = async () => {
         await authClient.signOut();
@@ -114,7 +121,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 <SidebarFooter>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <ThemeToggle />
+
                         </SidebarMenuItem>
                     </SidebarMenu>
                     <SidebarMenu>
@@ -160,6 +167,30 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                                                 </div>
                                             </div>
                                         </DropdownMenuLabel>
+                                    </DropdownMenuGroup>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuSub>
+                                            <DropdownMenuSubTrigger className="cursor-pointer">
+                                                <Sun className="mr-2 size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                                <Moon className="absolute mr-2 size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                                <span>Theme</span>
+                                            </DropdownMenuSubTrigger>
+                                            <DropdownMenuSubContent>
+                                                <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer">
+                                                    <Sun className="mr-2 size-4" />
+                                                    <span>Light</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer">
+                                                    <Moon className="mr-2 size-4" />
+                                                    <span>Dark</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer">
+                                                    <Monitor className="mr-2 size-4" />
+                                                    <span>System</span>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuSubContent>
+                                        </DropdownMenuSub>
                                     </DropdownMenuGroup>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
