@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import CanvasBackground from "@/components/CanvasBackground";
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [totpCode, setTotpCode] = useState("");
     const [step, setStep] = useState<"login" | "2fa">("login");
     const [loading, setLoading] = useState(false);
@@ -22,24 +24,24 @@ export default function LoginPage() {
         setLoading(true);
         setError("");
 
-        try {
-            const { data, error } = await authClient.signIn.email({
-                email,
-                password,
-            });
-
-            if (error) {
-                setError("Failed to login");
-            } else if (data?.twoFactorRedirect) {
-                setStep("2fa");
-            } else {
-                router.push("/dashboard");
+        await authClient.signIn.email({
+            email,
+            password,
+        }, {
+            onSuccess: (ctx) => {
+                if ("twoFactorRedirect" in ctx.data && ctx.data.twoFactorRedirect) {
+                    setStep("2fa");
+                } else {
+                    router.push("/dashboard");
+                }
+            },
+            onError: (ctx) => {
+                setError(ctx.error.message || "Failed to login");
+            },
+            onResponse: () => {
+                setLoading(false);
             }
-        } catch {
-            setError("An unexpected error occurred");
-        } finally {
-            setLoading(false);
-        }
+        });
     };
 
     const handle2FA = async (e: React.FormEvent) => {
@@ -111,15 +113,29 @@ export default function LoginPage() {
                                 <div className="flex items-center justify-between">
                                     <Label htmlFor="password" className="text-zinc-700 dark:text-zinc-300">Password</Label>
                                 </div>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    value={password}
-                                    placeholder="••••••••"
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    className="h-12 bg-white/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 focus:ring-indigo-500 rounded-xl px-4 transition-all"
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        value={password}
+                                        placeholder="••••••••"
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        className="h-12 bg-white/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 focus:ring-indigo-500 rounded-xl px-4 pr-12 transition-all w-full"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 focus:outline-none transition-colors"
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="w-5 h-5" />
+                                        ) : (
+                                            <Eye className="w-5 h-5" />
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                             <Button type="submit" className="w-full h-12 rounded-xl text-[15px] font-semibold bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white transition-all shadow-md mt-6" disabled={loading}>
                                 {loading ? "Signing in..." : "Sign In"}
