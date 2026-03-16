@@ -3,6 +3,7 @@ import { Instrument_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@/components/theme-provider";
+import { Analytics } from "@vercel/analytics/next"
 
 const instrumentSans = Instrument_Sans({
   variable: "--font-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body
         className={`${instrumentSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Analytics />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
