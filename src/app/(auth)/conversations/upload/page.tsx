@@ -80,7 +80,7 @@ export default function UploadPage() {
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl">
-            <div className="mb-8">
+            <div className="mb-2">
                 <h1 className="text-3xl font-bold tracking-tight">New Analysis</h1>
                 <p className="text-muted-foreground mt-1">
                     Paste your conversation below to get an AI-powered communication analysis.
@@ -89,12 +89,6 @@ export default function UploadPage() {
 
             <Card>
                 <form onSubmit={handleSubmit}>
-                    <CardHeader>
-                        <CardTitle>Conversation Details</CardTitle>
-                        <CardDescription>
-                            Format each line as <code className="bg-muted px-1 py-0.5 rounded text-xs mx-1">Speaker: Message</code> for best results.
-                        </CardDescription>
-                    </CardHeader>
                     <CardContent className="space-y-6 mt-6">
 
                         {error && (
