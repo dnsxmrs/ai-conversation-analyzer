@@ -55,8 +55,11 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.0.0",
     "@semantic-release/npm": "^13.1.5",
+    "@semantic-release/release-notes-generator": "^14.0.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -64,6 +67,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "prisma": "^7.4.2",
+    "semantic-release": "^24.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
