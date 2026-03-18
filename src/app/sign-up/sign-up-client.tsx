@@ -4,11 +4,11 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { signUpAction } from "@/app/_actions/auth";
 
 export default function SignUpClient() {
     const [name, setName] = useState("");
@@ -25,18 +25,17 @@ export default function SignUpClient() {
         setLoading(true);
         setError("");
 
-        const res = await signUpAction({
+        const { error: signUpError } = await authClient.signUp.email({
             email,
             password,
             name,
-            rememberMe,
         });
 
-        if (res.success) {
+        if (!signUpError) {
             router.push("/dashboard");
             router.refresh();
         } else {
-            setError(res.error || "Failed to create account");
+            setError(signUpError.message || "Failed to create account");
         }
         setLoading(false);
     };

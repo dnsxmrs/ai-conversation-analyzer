@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
-import { signInAction } from "@/app/_actions/auth";
 
 export default function SignInClient() {
     const [email, setEmail] = useState("");
@@ -21,28 +20,32 @@ export default function SignInClient() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const callbackUrl = searchParams.get("callbackUrl");
+    const redirectTo =
+        callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
+            ? callbackUrl
+            : "/dashboard";
 
     const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError("");
 
-        const res = await signInAction({
+        const { data, error: signInError } = await authClient.signIn.email({
             email,
             password,
             rememberMe,
         });
 
-        if (res.success) {
-            const data = res.data as { twoFactorRedirect?: boolean };
-            if (data?.twoFactorRedirect) {
-                setStep("2fa");
-            } else {
-                router.push("/dashboard");
-                router.refresh();
-            }
+        if (signInError) {
+            setError(signInError.message || "Failed to sign-in");
+        } else if ((data as { twoFactorRedirect?: boolean } | null)?.twoFactorRedirect) {
+            setStep("2fa");
         } else {
-            setError(res.error || "Failed to sign-in");
+            router.push(redirectTo);
+            router.refresh();
         }
         setLoading(false);
     };
@@ -60,7 +63,8 @@ export default function SignInClient() {
             if (error) {
                 setError("Invalid 2FA code");
             } else {
-                router.push("/dashboard");
+                router.push(redirectTo);
+                router.refresh();
             }
         } catch {
             setError("An unexpected error occurred");
