@@ -1,3 +1,4 @@
+// sign-in-client.tsx
 "use client";
 
 import { useState } from "react";
@@ -76,42 +77,61 @@ export default function SignInClient({ callbackUrl }: SignInClientProps) {
     };
 
     return (
-        <div className="mx-auto w-full max-w-sm mt-12 lg:mt-0">
-            <div className="mb-10 text-left">
-                <h2 className="mt-6 text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
-                    {step === "sign-in" ? "Welcome back" : "Two-Factor Verification"}
+        <div className="mx-auto w-full max-w-sm">
+
+            {/* ── Header — Typography hierarchy via opacity ── */}
+            <div className="mb-10">
+                {/* Eyebrow label — lowest opacity, sets context */}
+                <p className="font-mono text-[10px] tracking-[0.3em] text-indigo-400/60 uppercase mb-3">
+                    {step === "sign-in" ? "Secure Access" : "Identity Verification"}
+                </p>
+                {/* Headline — highest contrast, anchor font */}
+                <h2 className="text-4xl font-bold tracking-tight text-white leading-[1.1] mb-3">
+                    {step === "sign-in" ? (
+                        <>Welcome<br /><span className="text-white/30">back.</span></>
+                    ) : (
+                        <>Two-Factor<br /><span className="text-white/30">Check.</span></>
+                    )}
                 </h2>
-                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                {/* Body — mid-opacity, supporting role */}
+                <p className="text-sm text-white/40 leading-relaxed">
                     {step === "sign-in"
-                        ? "Enter your email and password to access your account."
+                        ? "Enter your credentials to access your workspace."
                         : "Enter the 6-digit code from your authenticator app."}
                 </p>
             </div>
 
+            {/* ── Error state ── */}
             {error && (
-                <div className="mb-6 p-4 rounded-xl bg-red-50/80 border border-red-100 dark:border-red-900/50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-medium">
+                <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium">
                     {error}
                 </div>
             )}
 
             {step === "sign-in" ? (
-                <form onSubmit={handleSignIn} className="space-y-5 relative">
+                <form onSubmit={handleSignIn} className="space-y-5">
+
+                    {/* Email field */}
                     <div className="space-y-2">
-                        <Label htmlFor="email" className="text-zinc-700 dark:text-zinc-300">Email</Label>
+                        <Label htmlFor="email" className="text-[11px] font-mono text-white/30 uppercase tracking-widest">
+                            Email
+                        </Label>
                         <Input
                             id="email"
                             type="email"
-                            placeholder="m@example.com"
+                            placeholder="you@example.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="h-12 bg-white/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 focus:ring-indigo-500 rounded-xl px-4 transition-all"
+                            className="h-12 bg-white/[0.04] border-white/[0.08] hover:border-white/[0.15] focus:border-indigo-500/60 focus:ring-0 focus:ring-offset-0 rounded-xl px-4 text-white/80 placeholder:text-white/20 transition-colors text-sm"
                         />
                     </div>
+
+                    {/* Password field */}
                     <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                            <Label htmlFor="password" className="text-zinc-700 dark:text-zinc-300">Password</Label>
-                        </div>
+                        <Label htmlFor="password" className="text-[11px] font-mono text-white/30 uppercase tracking-widest">
+                            Password
+                        </Label>
                         <div className="relative">
                             <Input
                                 id="password"
@@ -120,44 +140,61 @@ export default function SignInClient({ callbackUrl }: SignInClientProps) {
                                 placeholder="••••••••"
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="h-12 bg-white/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 focus:ring-indigo-500 rounded-xl px-4 pr-12 transition-all w-full"
+                                className="h-12 bg-white/[0.04] border-white/[0.08] hover:border-white/[0.15] focus:border-indigo-500/60 focus:ring-0 focus:ring-offset-0 rounded-xl px-4 pr-12 text-white/80 placeholder:text-white/20 transition-colors text-sm w-full"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 focus:outline-none transition-colors"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/50 focus:outline-none transition-colors"
                                 aria-label={showPassword ? "Hide password" : "Show password"}
                             >
-                                {showPassword ? (
-                                    <EyeOff className="w-5 h-5" />
-                                ) : (
-                                    <Eye className="w-5 h-5" />
-                                )}
+                                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
                         </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <Checkbox
-                            id="remember"
-                            checked={rememberMe}
-                            onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                            className="border-zinc-300 dark:border-zinc-700 data-[state=checked]:bg-zinc-900 dark:data-[state=checked]:bg-zinc-100 data-[state=checked]:border-zinc-900 dark:data-[state=checked]:border-zinc-100"
-                        />
-                        <Label
-                            htmlFor="remember"
-                            className="text-sm font-medium text-zinc-600 dark:text-zinc-400 cursor-pointer select-none"
-                        >
-                            Remember me
-                        </Label>
+
+                    {/* Remember me + forgot password row */}
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Checkbox
+                                id="remember"
+                                checked={rememberMe}
+                                onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                                className="border-white/20 data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500 rounded-md w-4 h-4"
+                            />
+                            <Label htmlFor="remember" className="text-xs text-white/30 cursor-pointer select-none hover:text-white/50 transition-colors">
+                                Remember me
+                            </Label>
+                        </div>
+                        <Link href="/forgot-password" className="text-xs text-white/25 hover:text-indigo-400 transition-colors">
+                            Forgot password?
+                        </Link>
                     </div>
-                    <Button type="submit" className="w-full h-12 rounded-xl text-[15px] font-semibold bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white transition-all shadow-md mt-6" disabled={loading}>
-                        {loading ? "Signing in..." : "Sign In"}
-                    </Button>
+
+                    {/* Submit — star treatment, rhymes with logo accent color */}
+                    <div className="pt-2">
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full h-12 rounded-xl text-sm font-semibold bg-indigo-500 hover:bg-indigo-400 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all duration-300 border-0"
+                        >
+                            {loading ? (
+                                <span className="flex items-center gap-2">
+                                    <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="30 70" strokeLinecap="round" />
+                                    </svg>
+                                    Signing in...
+                                </span>
+                            ) : "Sign In"}
+                        </Button>
+                    </div>
                 </form>
             ) : (
                 <form onSubmit={handle2FA} className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="totp" className="text-zinc-700 dark:text-zinc-300">Authentication Code</Label>
+                        <Label htmlFor="totp" className="text-[11px] font-mono text-white/30 uppercase tracking-widest">
+                            Auth Code
+                        </Label>
                         <Input
                             id="totp"
                             type="text"
@@ -166,23 +203,30 @@ export default function SignInClient({ callbackUrl }: SignInClientProps) {
                             onChange={(e) => setTotpCode(e.target.value)}
                             required
                             maxLength={6}
-                            className="h-14 text-center text-2xl tracking-[0.5em] font-mono bg-white/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 focus:ring-indigo-500 rounded-xl"
+                            className="h-16 text-center text-3xl tracking-[0.5em] font-mono bg-white/[0.04] border-white/[0.08] hover:border-white/[0.15] focus:border-indigo-500/60 focus:ring-0 rounded-xl text-white/80 placeholder:text-white/20 transition-colors"
                         />
                     </div>
-                    <Button type="submit" className="w-full h-12 rounded-xl text-[15px] font-semibold bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white transition-all shadow-md" disabled={loading}>
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full h-12 rounded-xl text-sm font-semibold bg-indigo-500 hover:bg-indigo-400 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all duration-300 border-0"
+                    >
                         {loading ? "Verifying..." : "Verify Code"}
                     </Button>
-                </form> 
+                </form>
             )}
 
+            {/* Sign up link — lowest hierarchy, dimmest text */}
             {step === "sign-in" && (
-                <div className="mt-8 pt-8 text-sm text-center lg:text-left text-zinc-600 dark:text-zinc-400 border-t border-zinc-200 dark:border-zinc-800/50">
-                    Don&apos;t have an account?{" "}
-                    <Link href="/sign-up" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 font-semibold transition-colors">
-                        Sign up
-                    </Link>
+                <div className="mt-8 pt-6 border-t border-white/[0.05] text-center">
+                    <p className="text-xs text-white/20">
+                        No account?{" "}
+                        <Link href="/sign-up" className="text-indigo-400/70 hover:text-indigo-400 font-medium transition-colors">
+                            Create one
+                        </Link>
+                    </p>
                 </div>
             )}
         </div>
-    )
+    );
 }
