@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 
-const authPages = ["/sign-in", "/sign-up"];
-const publicPaths = ["/", "/sign-in", "/sign-up"];
+const authPages = ["/sign-in", "/sign-up", "/forgot-password"];
+const publicPaths = ["/", "/sign-in", "/sign-up", "/forgot-password"];
 const publicPrefixes = ["/api/auth"];
 
 const isStaticAsset = (pathname: string) => /\.[^/]+$/.test(pathname);
