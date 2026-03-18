@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,11 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 
-export default function SignInClient() {
+type SignInClientProps = {
+    callbackUrl?: string;
+};
+
+export default function SignInClient({ callbackUrl }: SignInClientProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(true);
@@ -20,9 +24,7 @@ export default function SignInClient() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const router = useRouter();
-    const searchParams = useSearchParams();
 
-    const callbackUrl = searchParams.get("callbackUrl");
     const redirectTo =
         callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
             ? callbackUrl

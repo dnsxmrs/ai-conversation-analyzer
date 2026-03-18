@@ -2,7 +2,15 @@ import Link from "next/link";
 import CanvasBackground from "@/components/CanvasBackground";
 import SignInClient from "./sign-in-client";
 
-export default function SignInPage() {
+type SignInPageProps = {
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function SignInPage({ searchParams }: SignInPageProps) {
+    const params = await searchParams;
+    const callbackParam = params.callbackUrl;
+    const callbackUrl = Array.isArray(callbackParam) ? callbackParam[0] : callbackParam;
+
     return (
         <div className="flex min-h-screen overflow-hidden bg-zinc-50 dark:bg-black font-sans selection:bg-zinc-200 dark:selection:bg-zinc-800">
             {/* Left side: Form */}
@@ -13,7 +21,7 @@ export default function SignInPage() {
                         Conversation
                     </Link>
                 </div>
-                <SignInClient />
+                <SignInClient callbackUrl={callbackUrl} />
             </div>
 
             {/* Right side: Visuals */}
