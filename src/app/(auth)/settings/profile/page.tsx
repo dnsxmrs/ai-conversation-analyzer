@@ -80,7 +80,7 @@ export default function ProfilePage() {
             if (error) {
                 setDeleteError(error.message || "Failed to delete account");
             } else {
-                window.location.href = "/login";
+                window.location.href = "/sign-in";
             }
         } catch (err: unknown) {
             if (err instanceof Error) {

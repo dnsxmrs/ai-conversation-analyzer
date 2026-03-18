@@ -25,7 +25,7 @@ export default function UploadPage() {
 
     // Redirect if not logged in
     if (!isPending && !session?.user) {
-        router.push("/login");
+        router.push("/sign-in");
         return null;
     }
 
