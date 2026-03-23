@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
-    MessageSquare,
     LayoutDashboard,
     Upload,
     Settings,
@@ -70,12 +70,13 @@ export function SidebarNav({ children }: { children: React.ReactNode }) {
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                                    <MessageSquare className="size-4" />
+                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+                                    <Image src="/aica-logo-rbg.png" alt="AICA Logo" width={32} height={32} />
                                 </div>
-                                <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-semibold">AI Conversation</span>
-                                    <span className="truncate text-xs text-muted-foreground">Analyzer</span>
+                                <div className="grid flex-1 text-left text-sm leading-tight ml-1">
+                                    <span style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontStyle: "italic", fontSize: "20px", letterSpacing: "-0.01em", color: "var(--foreground)", opacity: 0.9 }}>
+                                        aica
+                                    </span>
                                 </div>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -85,9 +86,8 @@ export function SidebarNav({ children }: { children: React.ReactNode }) {
                 {/* Content — Navigation */}
                 <SidebarContent>
                     <SidebarGroup>
-                        <SidebarGroupLabel>Platform</SidebarGroupLabel>
                         <SidebarGroupContent>
-                            <SidebarMenu>
+                            <SidebarMenu className="gap-1">
                                 {navItems.map((item) => (
                                     <SidebarMenuItem key={item.title}>
                                         <SidebarMenuButton
@@ -203,10 +203,10 @@ export function SidebarNav({ children }: { children: React.ReactNode }) {
 
             <SidebarInset>
                 {/* Top bar */}
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+                <header className="flex h-16 shrink-0 items-center gap-3 px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 bg-background/50 backdrop-blur-md border-b" style={{ borderColor: "color-mix(in oklch, var(--border) 40%, transparent)" }}>
                     <SidebarTrigger className="-ml-1" />
                     <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-                    <div className="text-sm text-muted-foreground">
+                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--muted-foreground)", opacity: 0.7 }}>
                         {navItems.find((item) => pathname === item.href || pathname.startsWith(item.href + "/"))?.title ||
                             (pathname.startsWith("/settings") ? "Settings" : "")}
                     </div>

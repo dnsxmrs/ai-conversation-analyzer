@@ -8,9 +8,8 @@ export function NewAnalysisLink() {
     return (
         <Link
             href="/conversations/upload"
-            className={buttonVariants({
-                className: "gap-2 rounded-full px-5 font-medium bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-neutral-200"
-            })}
+            style={{ fontFamily: "'Geist', system-ui, sans-serif", fontSize: "13px", fontWeight: 500, letterSpacing: "0.01em", background: "var(--primary)", color: "var(--primary-foreground)", transition: "opacity 0.2s, transform 0.2s" }}
+            className="flex items-center gap-2 rounded-full px-6 py-2.5 hover:opacity-80 active:translate-y-0 hover:-translate-y-px"
         >
             <Plus className="w-4 h-4" />
             Analyze New Chat
@@ -20,7 +19,11 @@ export function NewAnalysisLink() {
 
 export function UploadConversationLink() {
     return (
-        <Link href="/conversations/upload" className={buttonVariants({ className: "rounded-full" })}>
+        <Link 
+            href="/conversations/upload" 
+            style={{ fontFamily: "'Geist', system-ui, sans-serif", fontSize: "13.5px", fontWeight: 500, background: "var(--primary)", color: "var(--primary-foreground)" }}
+            className="inline-flex items-center justify-center rounded-full px-7 py-3 hover:opacity-80 transition-opacity"
+        >
             Upload Conversation
         </Link>
     );
