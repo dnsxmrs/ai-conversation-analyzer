@@ -1,0 +1,222 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import {
+    MessageSquare,
+    LayoutDashboard,
+    Upload,
+    Settings,
+    LogOut,
+    ChevronsUpDown,
+    Moon,
+    Sun,
+    Monitor,
+} from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { useTheme } from "next-themes";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarGroupLabel,
+    SidebarHeader,
+    SidebarInset,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarProvider,
+    SidebarTrigger,
+} from "@/components/ui/sidebar";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const navItems = [
+    { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { title: "New Analysis", href: "/conversations/upload", icon: Upload },
+];
+
+export function SidebarNav({ children }: { children: React.ReactNode }) {
+    const { data: session, isPending } = authClient.useSession();
+    const pathname = usePathname();
+    const router = useRouter();
+    const { setTheme } = useTheme();
+
+    const handleSignOut = async () => {
+        await authClient.signOut();
+        router.push("/sign-in");
+    };
+
+    return (
+        <SidebarProvider>
+            <Sidebar>
+                {/* Header — App Logo */}
+                <SidebarHeader>
+                    <SidebarMenu>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
+                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                                    <MessageSquare className="size-4" />
+                                </div>
+                                <div className="grid flex-1 text-left text-sm leading-tight">
+                                    <span className="truncate font-semibold">AI Conversation</span>
+                                    <span className="truncate text-xs text-muted-foreground">Analyzer</span>
+                                </div>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                </SidebarHeader>
+
+                {/* Content — Navigation */}
+                <SidebarContent>
+                    <SidebarGroup>
+                        <SidebarGroupLabel>Platform</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {navItems.map((item) => (
+                                    <SidebarMenuItem key={item.title}>
+                                        <SidebarMenuButton
+                                            isActive={pathname === item.href || pathname.startsWith(item.href + "/")}
+                                            tooltip={item.title}
+                                            render={<Link href={item.href} />}
+                                        >
+                                            <item.icon />
+                                            <span>{item.title}</span>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                ))}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                </SidebarContent>
+
+                {/* Footer — Theme Toggle + User */}
+                <SidebarFooter>
+                    <SidebarMenu>
+                        <SidebarMenuItem>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger className="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm ring-sidebar-ring outline-hidden transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground h-12">
+                                    {isPending || !session?.user ? (
+                                        /* Skeleton while session loads */
+                                        <>
+                                            <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
+                                            <div className="grid flex-1 gap-1">
+                                                <Skeleton className="h-3 w-24" />
+                                                <Skeleton className="h-2.5 w-32" />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Avatar className="h-8 w-8 rounded-lg">
+                                                <AvatarImage src={session.user.image || ""} alt={session.user.name || "User"} />
+                                                <AvatarFallback className="rounded-lg">
+                                                    {session.user.name?.charAt(0).toUpperCase() || "U"}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div className="grid flex-1 text-left text-sm leading-tight">
+                                                <span className="truncate font-semibold">{session.user.name}</span>
+                                                <span className="truncate text-xs text-muted-foreground">{session.user.email}</span>
+                                            </div>
+                                            <ChevronsUpDown className="ml-auto size-4" />
+                                        </>
+                                    )}
+                                </DropdownMenuTrigger>
+
+                                {session?.user && (
+                                    <DropdownMenuContent
+                                        className="w-[--anchor-width] min-w-56 rounded-lg"
+                                        side="bottom"
+                                        align="end"
+                                        sideOffset={4}
+                                    >
+                                        <DropdownMenuGroup>
+                                            <DropdownMenuLabel className="p-0 font-normal">
+                                                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                                                    <Avatar className="h-8 w-8 rounded-lg">
+                                                        <AvatarImage src={session.user.image || ""} alt={session.user.name || "User"} />
+                                                        <AvatarFallback className="rounded-lg">
+                                                            {session.user.name?.charAt(0).toUpperCase() || "U"}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                    <div className="grid flex-1 text-left text-sm leading-tight">
+                                                        <span className="truncate font-semibold">{session.user.name}</span>
+                                                        <span className="truncate text-xs text-muted-foreground">{session.user.email}</span>
+                                                    </div>
+                                                </div>
+                                            </DropdownMenuLabel>
+                                        </DropdownMenuGroup>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuGroup>
+                                            <DropdownMenuSub>
+                                                <DropdownMenuSubTrigger className="cursor-pointer">
+                                                    <Sun className="mr-2 size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                                    <Moon className="absolute mr-2 size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                                    <span>Theme</span>
+                                                </DropdownMenuSubTrigger>
+                                                <DropdownMenuSubContent>
+                                                    <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer">
+                                                        <Sun className="mr-2 size-4" /><span>Light</span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer">
+                                                        <Moon className="mr-2 size-4" /><span>Dark</span>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer">
+                                                        <Monitor className="mr-2 size-4" /><span>System</span>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuSubContent>
+                                            </DropdownMenuSub>
+                                        </DropdownMenuGroup>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuGroup>
+                                            <DropdownMenuItem onClick={() => router.push("/settings")} className="cursor-pointer">
+                                                <Settings className="mr-2 size-4" />Settings
+                                            </DropdownMenuItem>
+                                        </DropdownMenuGroup>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuGroup>
+                                            <DropdownMenuItem onClick={handleSignOut} className="text-red-600 focus:text-red-600 cursor-pointer">
+                                                <LogOut className="mr-2 size-4" />Log out
+                                            </DropdownMenuItem>
+                                        </DropdownMenuGroup>
+                                    </DropdownMenuContent>
+                                )}
+                            </DropdownMenu>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                </SidebarFooter>
+            </Sidebar>
+
+            <SidebarInset>
+                {/* Top bar */}
+                <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+                    <SidebarTrigger className="-ml-1" />
+                    <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+                    <div className="text-sm text-muted-foreground">
+                        {navItems.find((item) => pathname === item.href || pathname.startsWith(item.href + "/"))?.title ||
+                            (pathname.startsWith("/settings") ? "Settings" : "")}
+                    </div>
+                </header>
+
+                {/* Page content */}
+                <div className="flex-1">
+                    {children}
+                </div>
+            </SidebarInset>
+        </SidebarProvider>
+    );
+}

@@ -1,523 +1,805 @@
+'use client';
+
 import Link from "next/link";
-import { ArrowRight, MessageSquare, ShieldAlert } from "lucide-react";
-import CanvasBackground from "@/components/CanvasBackground";
+import Footer from "../components/Footer";
+import { ArrowUpRight, Shield, Activity, Zap, Sun, Moon } from "lucide-react";
 
 export default function Home() {
-  return (
-    <div
-      className="relative flex flex-col items-center overflow-hidden bg-[#F7F5F0] dark:bg-[#0A0A0A] font-sans selection:bg-zinc-200 dark:selection:bg-zinc-800"
-      style={{ fontFamily: "'DM Sans', sans-serif" }}
-    >
-      {/* Google Fonts */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+    return (
+        <div
+            className="min-h-screen bg-background text-foreground font-sans overflow-x-hidden transition-colors duration-300"
+            style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}
+        >
+            <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&display=swap');
 
-        .font-display { font-family: 'DM Serif Display', Georgia, serif; }
+        /* ── Design tokens — light defaults, dark overrides ── */
+        :root {
+          --ink:        oklch(0.1908 0.0020 106.5859);   /* card-foreground light */
+          --paper:      oklch(0.9818 0.0054 95.0986);    /* background light */
+          --warm:       oklch(0.3438 0.0269 95.7226);    /* foreground light */
+          --dim:        oklch(0.6059 0.0075 97.4233);    /* muted-foreground light */
+          --accent:     oklch(0.6171 0.1375 39.0427);    /* primary light — warm amber */
+          --accent-fg:  oklch(1.0000 0 0);               /* primary-foreground */
+          --danger:     oklch(0.5800 0.1800 25.00);
+          --ok:         oklch(0.5000 0.1100 155.00);
+          --border:     oklch(0.8847 0.0069 97.3627 / 0.60);
+          --border-h:   oklch(0.8847 0.0069 97.3627 / 0.90);
+          --surface:    oklch(0.9341 0.0153 90.2390 / 0.60);  /* muted/card tint */
+          --surface-h:  oklch(0.9245 0.0138 92.9892 / 0.80);
+          --bg-atmo-1:  oklch(0.6171 0.1375 39.0427 / 0.08);
+          --bg-atmo-2:  oklch(0.5000 0.1100 155.00  / 0.06);
+          --grid-line:  oklch(0.3438 0.0269 95.7226 / 0.04);
+          --scan-line:  oklch(0.6171 0.1375 39.0427 / 0.35);
+          --msg-alex:   oklch(0.9245 0.0138 92.9892);
+          --shadow-card: 0 24px 80px oklch(0 0 0 / 0.10), 0 0 0 1px oklch(0.6171 0.1375 39.0427 / 0.08);
+          --shadow-float: 0 8px 32px oklch(0 0 0 / 0.10);
+        }
 
-        /* Noise texture overlay */
-        .noise::after {
+        .dark {
+          --ink:        oklch(0.9818 0.0054 95.0986);
+          --paper:      oklch(0.2679 0.0036 106.6427);
+          --warm:       oklch(0.8074 0.0142 93.0137);
+          --dim:        oklch(0.7713 0.0169 99.0657 / 0.70);
+          --accent:     oklch(0.6724 0.1308 38.7559);
+          --accent-fg:  oklch(1.0000 0 0);
+          --danger:     oklch(0.6368 0.2078 25.3313);
+          --ok:         oklch(0.5800 0.1300 155.00);
+          --border:     oklch(0.8074 0.0142 93.0137 / 0.10);
+          --border-h:   oklch(0.8074 0.0142 93.0137 / 0.18);
+          --surface:    oklch(1 0 0 / 0.03);
+          --surface-h:  oklch(1 0 0 / 0.06);
+          --bg-atmo-1:  oklch(0.6724 0.1308 38.7559 / 0.07);
+          --bg-atmo-2:  oklch(0.5800 0.1300 155.00  / 0.05);
+          --grid-line:  oklch(0.8074 0.0142 93.0137 / 0.03);
+          --scan-line:  oklch(0.6724 0.1308 38.7559 / 0.40);
+          --msg-alex:   oklch(1 0 0 / 0.04);
+          --shadow-card: 0 24px 80px oklch(0 0 0 / 0.50), 0 0 0 1px oklch(0.6724 0.1308 38.7559 / 0.06);
+          --shadow-float: 0 8px 32px oklch(0 0 0 / 0.40);
+        }
+
+        /* ── Typography system ── */
+        .font-display { font-family: 'Playfair Display', Georgia, serif; }
+        .font-mono    { font-family: 'DM Mono', monospace; }
+
+        /* ── Fade-in cascade ── */
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes driftY {
+          0%,100% { transform: translateY(0); }
+          50%      { transform: translateY(-6px); }
+        }
+        @keyframes scanDown {
+          0%   { top: 0%; opacity: 0; }
+          5%   { opacity: 0.7; }
+          95%  { opacity: 0.7; }
+          100% { top: 100%; opacity: 0; }
+        }
+        @keyframes shimmer {
+          0%   { background-position: -200% 0; }
+          100% { background-position:  200% 0; }
+        }
+        @keyframes pulseRing {
+          0%  { box-shadow: 0 0 0 0 color-mix(in oklch, var(--danger) 40%, transparent); }
+          70% { box-shadow: 0 0 0 6px color-mix(in oklch, var(--danger) 0%, transparent); }
+          100%{ box-shadow: 0 0 0 0 color-mix(in oklch, var(--danger) 0%, transparent); }
+        }
+
+        .anim-1 { animation: fadeUp 0.6s ease both; }
+        .anim-2 { animation: fadeUp 0.6s ease 0.10s both; }
+        .anim-3 { animation: fadeUp 0.6s ease 0.20s both; }
+        .anim-4 { animation: fadeUp 0.6s ease 0.30s both; }
+        .anim-5 { animation: fadeUp 0.6s ease 0.40s both; }
+        .drift  { animation: driftY 7s ease-in-out infinite; }
+
+        /* ── Thin rule motif ── */
+        .rule {
+          display: inline-block;
+          height: 1px;
+          background: var(--accent);
+          opacity: 0.5;
+        }
+
+        /* ── Glass card ── */
+        .glass {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          transition: border-color 0.2s, background 0.3s;
+        }
+        .glass:hover {
+          border-color: var(--border-h);
+          background: var(--surface-h);
+        }
+
+        /* ── Noise grain overlay ── */
+        .grain::after {
           content: '';
           position: absolute;
           inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+          border-radius: inherit;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
           pointer-events: none;
           z-index: 1;
-          opacity: 0.35;
         }
 
-        @keyframes float-up {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
+        /* ── CTA button ── */
+        .btn-primary {
+          position: relative;
+          overflow: hidden;
+          background: var(--accent);
+          color: var(--accent-fg);
+          font-weight: 500;
+          letter-spacing: 0.01em;
+          transition: opacity 0.2s, transform 0.2s;
         }
-        @keyframes float-down {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(8px); }
+        .btn-primary::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(105deg, transparent 35%, oklch(1 0 0 / 0.22) 50%, transparent 65%);
+          background-size: 200% 100%;
+          animation: shimmer 3s ease-in-out infinite;
         }
-        @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-ghost {
+          background: transparent;
+          border: 1px solid var(--border-h);
+          color: var(--warm);
+          opacity: 0.7;
+          transition: opacity 0.2s, border-color 0.2s, transform 0.2s;
         }
-        @keyframes pulse-ring {
-          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
-          70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        .btn-ghost:hover { opacity: 1; border-color: var(--border-h); transform: translateY(-1px); }
+
+        /* Theme toggle */
+        .btn-theme {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          color: var(--dim);
+          border-radius: 9999px;
+          width: 32px; height: 32px;
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer;
+          transition: background 0.2s, border-color 0.2s, color 0.2s;
         }
-        @keyframes scan-line {
-          0% { top: 10%; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { top: 90%; opacity: 0; }
+        .btn-theme:hover {
+          background: var(--surface-h);
+          border-color: var(--border-h);
+          color: var(--warm);
         }
 
-        .float-a { animation: float-up 6s ease-in-out infinite; }
-        .float-b { animation: float-down 7s ease-in-out infinite 1s; }
-        .float-c { animation: float-up 8s ease-in-out infinite 0.5s; }
+        /* ── Card window chrome ── */
+        .window-dot { width: 8px; height: 8px; border-radius: 50%; }
 
-        .fade-in-1 { animation: fade-in-up 0.7s ease forwards; }
-        .fade-in-2 { animation: fade-in-up 0.7s ease 0.15s forwards; opacity: 0; }
-        .fade-in-3 { animation: fade-in-up 0.7s ease 0.3s forwards; opacity: 0; }
-        .fade-in-4 { animation: fade-in-up 0.7s ease 0.45s forwards; opacity: 0; }
-        .fade-in-5 { animation: fade-in-up 0.7s ease 0.6s forwards; opacity: 0; }
-
-        .pulse-red { animation: pulse-ring 2s ease-out infinite; }
-
-        .scan-line { animation: scan-line 4s linear infinite; }
-
-        .glass-card {
-          background: rgba(255,255,255,0.55);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border: 1px solid rgba(255,255,255,0.8);
-        }
-        .dark .glass-card {
-          background: rgba(20,20,20,0.55);
-          border: 1px solid rgba(255,255,255,0.08);
+        /* ── Scan line ── */
+        .scan-line {
+          position: absolute;
+          left: 0; right: 0; height: 1px;
+          background: linear-gradient(to right, transparent, var(--scan-line), transparent);
+          animation: scanDown 4.5s linear infinite;
+          pointer-events: none;
+          z-index: 10;
         }
 
-        /* Message bubble hover */
-        .msg-bubble { transition: transform 0.2s ease; }
-        .msg-bubble:hover { transform: scale(1.02); }
+        /* ── Badge pulse ── */
+        .pulse-danger { animation: pulseRing 2s ease-out infinite; }
+
+        /* ── Meter bar ── */
+        .meter-fill {
+          height: 100%;
+          border-radius: 9999px;
+          transition: width 1s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* ── Feature strip ── */
+        .feature-strip {
+        //   border-top: 1px solid var(--border);
+          transition: border-color 0.3s;
+        }
+        .feature-strip:hover { border-top-color: var(--border-h); }
+
+        /* ── Eyebrow ── */
+        .eyebrow {
+          font-family: 'DM Mono', monospace;
+          font-size: 10px;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: var(--dim);
+        }
+
+        /* ── Ambient glow ── */
+        .star-glow {
+          position: absolute;
+          inset: -60px;
+          border-radius: 40px;
+          background: radial-gradient(ellipse 70% 55% at 55% 50%,
+            color-mix(in oklch, var(--accent) 10%, transparent) 0%,
+            transparent 70%
+          );
+          filter: blur(40px);
+          pointer-events: none;
+          z-index: -1;
+        }
+
+        /* ── Background radial ── */
+        .bg-atmo {
+          position: absolute;
+          border-radius: 9999px;
+          pointer-events: none;
+          filter: blur(100px);
+        }
+
+        /* ── Section divider ── */
+        .section-divider {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
+        .section-divider .line {
+          flex: 1;
+          height: 1px;
+          background: var(--border);
+        }
+
+        /* ── Message bubble ── */
+        .msg { transition: transform 0.2s ease; }
+        .msg:hover { transform: scale(1.01); }
+
+        /* ── Feature number ── */
+        .feat-num {
+          font-family: 'Playfair Display', serif;
+          font-style: italic;
+          font-size: 11px;
+          color: var(--dim);
+          opacity: 0.5;
+          user-select: none;
+        }
+
+        /* ── Opacity hierarchy ── */
+        .op-90 { opacity: 0.90; }
+        .op-60 { opacity: 0.60; }
+        .op-40 { opacity: 0.40; }
+        .op-25 { opacity: 0.25; }
+
+        /* ── Chips ── */
+        .chip-danger {
+          font-family: 'DM Mono', monospace;
+          font-size: 9px;
+          letter-spacing: 0.10em;
+          text-transform: uppercase;
+          padding: 2px 8px;
+          border-radius: 9999px;
+          border: 1px solid color-mix(in oklch, var(--danger) 30%, transparent);
+          background: color-mix(in oklch, var(--danger) 12%, transparent);
+          color: var(--danger);
+        }
+        .chip-ok {
+          font-family: 'DM Mono', monospace;
+          font-size: 9px;
+          letter-spacing: 0.10em;
+          text-transform: uppercase;
+          padding: 2px 8px;
+          border-radius: 9999px;
+          border: 1px solid color-mix(in oklch, var(--ok) 30%, transparent);
+          background: color-mix(in oklch, var(--ok) 12%, transparent);
+          color: var(--ok);
+        }
+        .chip-warn {
+          font-family: 'DM Mono', monospace;
+          font-size: 9px;
+          letter-spacing: 0.10em;
+          text-transform: uppercase;
+          padding: 2px 8px;
+          border-radius: 9999px;
+          border: 1px solid color-mix(in oklch, var(--accent) 30%, transparent);
+          background: color-mix(in oklch, var(--accent) 10%, transparent);
+          color: var(--accent);
+        }
+
+        /* ── Message bubble bg ── */
+        .msg-alex-bg {
+          background: var(--msg-alex);
+        }
+
+        /* ── Waveform bar ── */
+        .wave-high   { background: var(--danger); }
+        .wave-mid    { background: var(--accent); }
+        .wave-low    { background: color-mix(in oklch, var(--accent) 25%, transparent); }
+
+        /* ── Footer link ── */
+        .footer-link {
+          color: var(--dim);
+          font-size: 12px;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .footer-link:hover { color: var(--warm); }
+
+        /* ── Nav border ── */
+        .nav-border-b {
+          border-bottom: 1px solid var(--border);
+        }
+
+        /* ── Meter track ── */
+        .meter-track {
+          background: color-mix(in oklch, var(--warm) 6%, transparent);
+        }
+
+        /* ── Feature card bg ── */
+        .feature-card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          backdrop-filter: blur(16px);
+          box-shadow: var(--shadow-float);
+          transition: background 0.3s, border-color 0.2s;
+        }
+        .feature-card:hover {
+          border-color: var(--border-h);
+        }
+
+        /* ── Gauge gradient — adaptive ── */
+        .gauge-stop-1 { stop-color: var(--danger); }
+        .gauge-stop-2 { stop-color: var(--accent); }
+        .gauge-stop-3 { stop-color: var(--ok); }
+
+        /* ── Health gradient bar ── */
+        .health-bar {
+          background: linear-gradient(to right, var(--danger), var(--accent), var(--ok));
+        }
       `}</style>
 
-      <CanvasBackground />
+            {/* ── Theme toggle script (runs before paint) ── */}
+            <script dangerouslySetInnerHTML={{
+                __html: `
+        (function() {
+          var stored = localStorage.getItem('aica-theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (stored === 'dark' || (!stored && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        })();
+      ` }} />
 
-      {/* Background blobs — visual rhyme: same shapes as feature icons */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-5%] left-[-15%] w-[45%] h-[45%] rounded-full bg-amber-400/10 dark:bg-amber-500/8 blur-[140px]" />
-        <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/10 dark:bg-indigo-500/8 blur-[130px]" />
-        <div className="absolute top-[55%] left-[20%] w-[30%] h-[25%] rounded-full bg-rose-400/8 blur-[120px]" />
-        {/* Subtle grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808010_1px,transparent_1px),linear-gradient(to_bottom,#80808010_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_20%,#000_60%,transparent_100%)]" />
-      </div>
-
-      <main className="relative z-10 flex flex-col items-center justify-center w-full max-w-6xl px-6 pt-28 pb-24 mx-auto">
-
-        {/* ── HERO SECTION ───────────────────────────────────── */}
-        <div className="w-full flex flex-col lg:flex-row items-center gap-16 lg:gap-12 text-left">
-
-          {/* Left: Copy */}
-          <div className="flex-1 flex flex-col items-start">
-
-            {/* Eyebrow label — rhymes with pill-shaped CTAs */}
-            <div className="fade-in-1 inline-flex items-center gap-2 px-4 py-1.5 mb-7 rounded-full border border-zinc-300/60 dark:border-zinc-700/60 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-md shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[12px] font-semibold tracking-widest uppercase text-zinc-500 dark:text-zinc-400">
-                Conversation Intelligence
-              </span>
+            {/* ── Background atmosphere ── */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+                <div className="bg-atmo w-[50%] h-[45%] top-[-10%] left-[-15%]"
+                    style={{ background: "radial-gradient(ellipse, var(--bg-atmo-1), transparent 70%)" }} />
+                <div className="bg-atmo w-[40%] h-[35%] bottom-[5%] right-[-10%]"
+                    style={{ background: "radial-gradient(ellipse, var(--bg-atmo-2), transparent 70%)" }} />
+                <div className="absolute inset-0"
+                    style={{
+                        backgroundImage: "linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)",
+                        backgroundSize: "48px 48px",
+                        maskImage: "radial-gradient(ellipse 80% 60% at 50% 10%, black 40%, transparent 100%)",
+                    }}
+                />
             </div>
 
-            {/* Anchor headline — DM Serif Display, large, tight */}
-            <h1
-              className="font-display fade-in-2 text-5xl sm:text-6xl lg:text-[68px] leading-[1.05] tracking-tight text-zinc-900 dark:text-white mb-2"
-            >
-              Read between
-            </h1>
-            <h1
-              className="font-display fade-in-2 text-5xl sm:text-6xl lg:text-[68px] leading-[1.05] tracking-tight mb-6"
-              style={{
-                background: "linear-gradient(135deg, #C2873A 0%, #E8A44A 40%, #C25A2E 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              every line.
-            </h1>
-
-            {/* Supporting copy — DM Sans light, muted */}
-            <p className="fade-in-3 text-lg text-zinc-500 dark:text-zinc-400 mb-10 leading-relaxed font-light max-w-lg">
-              Upload any chat and our AI decodes hidden tone, flags manipulation, measures sentiment, and scores your communication health — instantly.
-            </p>
-
-            {/* CTAs — pill-shaped, rhyming the eyebrow badge */}
-            <div className="fade-in-4 flex flex-col sm:flex-row items-start gap-3 w-full sm:w-auto">
-              <Link href="/sign-up">
-                <button className="flex items-center justify-center rounded-full px-7 h-13 py-3.5 text-[14px] font-semibold gap-2 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0">
-                  Analyze a conversation
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </Link>
-              <Link href="/sign-in">
-                <button className="flex items-center justify-center rounded-full px-7 py-3.5 text-[14px] font-medium border border-zinc-300/80 dark:border-zinc-700/80 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md hover:bg-white dark:hover:bg-zinc-900 transition-all text-zinc-700 dark:text-zinc-300">
-                  Log in
-                </button>
-              </Link>
-            </div>
-          </div>
-
-          {/* ── RIGHT: STAR OF THE SHOW — Conversation Analysis Graphic ── */}
-          <div className="flex-1 w-full max-w-[480px] lg:max-w-none relative select-none">
-
-            {/* Main chat window card */}
-            <div className="relative glass-card rounded-[28px] shadow-[0_24px_80px_rgba(0,0,0,0.12)] dark:shadow-[0_24px_80px_rgba(0,0,0,0.4)] p-5 overflow-hidden noise">
-
-              {/* Fake window chrome */}
-              <div className="flex items-center gap-2 mb-4 pb-4 border-b border-zinc-200/60 dark:border-zinc-800/60">
-                <div className="flex gap-1.5">
-                  <span className="w-3 h-3 rounded-full bg-red-400/80" />
-                  <span className="w-3 h-3 rounded-full bg-amber-400/80" />
-                  <span className="w-3 h-3 rounded-full bg-emerald-400/80" />
+            {/* ══════════════════════════════════════
+          NAV
+      ══════════════════════════════════════ */}
+            <nav className="relative z-20 flex items-center justify-between px-8 py-6 max-w-6xl mx-auto">
+                <div className="flex items-center gap-2.5">
                 </div>
-                <div className="flex-1 mx-3 h-6 rounded-md bg-zinc-100/80 dark:bg-zinc-800/80 flex items-center px-3">
-                  <span className="text-[11px] text-zinc-400 font-mono">chat_export_aug_14.txt</span>
-                </div>
-                {/* Scan indicator */}
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/60">
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                  <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold tracking-wide">ANALYZING</span>
-                </div>
-              </div>
+                <div className="flex items-center gap-4">
 
-              {/* Scan line effect */}
-              <div
-                className="scan-line absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-indigo-400/50 to-transparent pointer-events-none z-20"
-                style={{ top: "10%" }}
-              />
-
-              {/* Chat messages */}
-              <div className="flex flex-col gap-3 relative z-10">
-
-                {/* Message A — from "Alex" */}
-                <div className="msg-bubble flex flex-col items-start gap-1">
-                  <span className="text-[11px] text-zinc-400 dark:text-zinc-600 ml-1 font-medium">Alex</span>
-                  <div className="flex items-start gap-2 max-w-[85%]">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-[11px] font-bold">A</div>
-                    <div className="relative">
-                      <div className="px-4 py-2.5 rounded-[16px] rounded-tl-[4px] bg-white dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-700/60 shadow-sm">
-                        <p className="text-[13px] text-zinc-700 dark:text-zinc-200 leading-relaxed">
-                          I already told you, it&apos;s <span className="bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 px-1 rounded font-medium">not my fault</span> the project failed.
-                        </p>
-                      </div>
-                      {/* Annotation badge — floats off the card */}
-                      <div className="absolute -right-3 -top-3 float-a">
-                        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-500 shadow-lg shadow-rose-500/30 pulse-red">
-                          <ShieldAlert className="w-3 h-3 text-white" />
-                          <span className="text-[10px] font-bold text-white tracking-wide">Deflection</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Message B — from "Jordan" */}
-                <div className="msg-bubble flex flex-col items-end gap-1">
-                  <span className="text-[11px] text-zinc-400 dark:text-zinc-600 mr-1 font-medium">Jordan</span>
-                  <div className="flex items-start justify-end gap-2 max-w-[85%] self-end">
-                    <div className="relative">
-                      <div className="px-4 py-2.5 rounded-[16px] rounded-tr-[4px] bg-indigo-600 shadow-sm">
-                        <p className="text-[13px] text-white leading-relaxed">
-                          Fine. What do <em>you</em> think we should do to move forward?
-                        </p>
-                      </div>
-                      {/* Annotation */}
-                      <div className="absolute -left-3 -top-3 float-b">
-                        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/30">
-                          <span className="text-[10px] font-bold text-white tracking-wide">+Constructive</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-violet-600 flex-shrink-0 flex items-center justify-center text-white text-[11px] font-bold">J</div>
-                  </div>
-                </div>
-
-                {/* Message C — from "Alex" again */}
-                <div className="msg-bubble flex flex-col items-start gap-1">
-                  <span className="text-[11px] text-zinc-400 dark:text-zinc-600 ml-1 font-medium">Alex</span>
-                  <div className="flex items-start gap-2 max-w-[90%]">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-[11px] font-bold">A</div>
-                    <div className="relative">
-                      <div className="px-4 py-2.5 rounded-[16px] rounded-tl-[4px] bg-white dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-700/60 shadow-sm">
-                        <p className="text-[13px] text-zinc-700 dark:text-zinc-200 leading-relaxed">
-                          I <span className="bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 px-1 rounded font-medium">guess</span> we could revisit the timeline…{" "}
-                          <span className="bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 px-1 rounded font-medium">if you want.</span>
-                        </p>
-                      </div>
-                      <div className="absolute -right-3 -top-3 float-c">
-                        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500 shadow-lg shadow-amber-500/30">
-                          <span className="text-[10px] font-bold text-white tracking-wide">Passive tone</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Divider: analysis begins */}
-                <div className="flex items-center gap-3 my-1">
-                  <div className="flex-1 h-px bg-zinc-200/60 dark:bg-zinc-800/60" />
-                  <span className="text-[10px] font-semibold tracking-widest text-zinc-400 dark:text-zinc-600 uppercase">AI Analysis</span>
-                  <div className="flex-1 h-px bg-zinc-200/60 dark:bg-zinc-800/60" />
-                </div>
-
-                {/* Analysis result row */}
-                <div className="flex flex-col gap-2 px-1">
-
-                  {/* Sentiment bar */}
-                  <div className="flex items-center gap-3">
-                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 w-20 flex-shrink-0 font-medium">Sentiment</span>
-                    <div className="flex-1 h-2 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                      <div
-                        className="h-full rounded-full"
-                        style={{
-                          width: "38%",
-                          background: "linear-gradient(to right, #f87171, #fb923c)",
+                    {/* Theme toggle */}
+                    <button
+                        className="btn-theme"
+                        aria-label="Toggle theme"
+                        onClick={() => {
+                            const root = document.documentElement;
+                            const isDark = root.classList.toggle('dark');
+                            localStorage.setItem('aica-theme', isDark ? 'dark' : 'light');
                         }}
-                      />
-                    </div>
-                    <span className="text-[11px] font-bold text-rose-500 w-12 text-right">Tense</span>
-                  </div>
+                    >
+                        {/* Show sun in dark, moon in light — via CSS */}
+                        <span className="dark:hidden"><Moon className="w-3.5 h-3.5" /></span>
+                        <span className="hidden dark:block"><Sun className="w-3.5 h-3.5" /></span>
+                    </button>
 
-                  {/* Health score */}
-                  <div className="flex items-center gap-3">
-                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 w-20 flex-shrink-0 font-medium">Health</span>
-                    <div className="flex-1 h-2 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                      <div
-                        className="h-full rounded-full"
-                        style={{
-                          width: "54%",
-                          background: "linear-gradient(to right, #facc15, #84cc16)",
-                        }}
-                      />
-                    </div>
-                    <span className="text-[11px] font-bold text-amber-500 w-12 text-right">54 / 100</span>
-                  </div>
-
-                  {/* Red flags */}
-                  <div className="flex items-center gap-3">
-                    <span className="text-[11px] text-zinc-400 dark:text-zinc-500 w-20 flex-shrink-0 font-medium">Red flags</span>
-                    <div className="flex gap-1.5 flex-wrap">
-                      {["Blame-shifting", "Passiveness", "Evasion"].map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-800/60"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                    <Link href="/sign-in">
+                        <button className="btn-ghost text-[13px] rounded-full px-5 py-2 cursor-pointer">Log in</button>
+                    </Link>
+                    <Link href="/sign-up">
+                        <button className="btn-primary text-[13px] rounded-full px-5 py-2 flex items-center gap-1.5 cursor-pointer">
+                            Get started <ArrowUpRight className="w-3.5 h-3.5" />
+                        </button>
+                    </Link>
                 </div>
-              </div>
-            </div>
+            </nav>
 
-            {/* Floating accent card — health score callout */}
-            <div className="absolute -bottom-6 -left-6 glass-card rounded-2xl px-4 py-3 shadow-xl float-b hidden sm:flex flex-col gap-0.5">
-              <span className="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">Overall Score</span>
-              <div className="flex items-baseline gap-1">
-                <span className="font-display text-3xl text-zinc-900 dark:text-white">54</span>
-                <span className="text-[12px] text-zinc-400">/100</span>
-              </div>
-              <span className="text-[11px] font-medium text-amber-600 dark:text-amber-400">Needs attention</span>
-            </div>
+            <main className="relative z-10 max-w-6xl mx-auto px-8">
 
-            {/* Floating accent card — messages scanned */}
-            <div className="absolute -top-4 -right-4 glass-card rounded-2xl px-4 py-3 shadow-xl float-a hidden sm:flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/60 flex items-center justify-center">
-                <MessageSquare className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              </div>
-              <div>
-                <span className="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest block">Scanned</span>
-                <span className="font-display text-xl text-zinc-900 dark:text-white">47 msgs</span>
-              </div>
-            </div>
+                {/* ══════════════════════════════════════
+            HERO
+        ══════════════════════════════════════ */}
+                <section className="pt-16 pb-32 flex flex-col lg:flex-row items-start gap-20 lg:gap-24">
 
-          </div>
+                    {/* ── Left: Copy ── */}
+                    <div className="flex-1 flex flex-col items-start pt-4">
+                        <div className="anim-1 flex items-center gap-2 mb-5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 animate-pulse" />
+                            <span className="eyebrow">Conversation Intelligence</span>
+                        </div>
+
+                        <h1 className="anim-2 font-display mb-6" style={{ fontSize: "clamp(3rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em", color: "var(--warm)" }}>
+                            <span className="op-90">Read between</span>
+                            <br />
+                            <span className="italic" style={{ color: "var(--accent)" }}>every line.</span>
+                        </h1>
+
+                        <p className="anim-3 op-60 mb-10" style={{ fontSize: "1rem", lineHeight: 1.78, fontWeight: 300, maxWidth: "22rem", color: "var(--warm)" }}>
+                            Upload any conversation and our AI decodes tone, flags manipulation, measures sentiment, and scores your communication health — instantly.
+                        </p>
+
+                        <div className="anim-4 flex items-center gap-3">
+                            <Link href="/sign-up">
+                                <button className="btn-primary rounded-full px-7 py-3 text-[13px] flex items-center gap-2 cursor-pointer">
+                                    Analyze a conversation
+                                    <ArrowUpRight className="w-3.5 h-3.5" />
+                                </button>
+                            </Link>
+                            <Link href="/sign-in">
+                                <button className="btn-ghost rounded-full px-6 py-3 text-[13px] cursor-pointer">Log in</button>
+                            </Link>
+                        </div>
+
+                        <div className="anim-5 flex items-center gap-3 mt-10 op-25">
+                            <div className="flex -space-x-1.5">
+                                {["oklch(0.52 0.06 60)", "oklch(0.50 0.07 170)", "oklch(0.48 0.08 290)"].map((c, i) => (
+                                    <div key={i} className="w-6 h-6 rounded-full border" style={{ background: c, borderColor: "var(--paper)" }} />
+                                ))}
+                            </div>
+                            <span className="font-mono text-[11px] tracking-wide" style={{ color: "var(--warm)" }}>4,200+ conversations analyzed</span>
+                        </div>
+                    </div>
+
+                    {/* ── Right: Analysis window ── */}
+                    <div className="w-full max-w-[440px] lg:max-w-none lg:w-[48%] relative flex-shrink-0">
+                        <div className="star-glow" />
+
+                        {/* Main card */}
+                        <div className="anim-3 grain rounded-2xl overflow-hidden relative feature-card"
+                            style={{ boxShadow: "var(--shadow-card)" }}>
+
+                            {/* Window chrome */}
+                            <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
+                                <div className="flex gap-1.5">
+                                    <div className="window-dot" style={{ background: "oklch(0.65 0.18 28)" }} />
+                                    <div className="window-dot" style={{ background: "oklch(0.75 0.15 85)" }} />
+                                    <div className="window-dot" style={{ background: "oklch(0.60 0.15 145)" }} />
+                                </div>
+                                <div className="flex-1 mx-2 h-5 rounded flex items-center px-2.5" style={{ background: "color-mix(in oklch, var(--warm) 5%, transparent)" }}>
+                                    <span className="font-mono op-40" style={{ fontSize: 10, color: "var(--warm)" }}>chat_export_aug_14.txt</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                                    style={{ background: "color-mix(in oklch, var(--ok) 12%, transparent)", border: "1px solid color-mix(in oklch, var(--ok) 20%, transparent)" }}>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    <span className="font-mono op-90" style={{ fontSize: 9, color: "var(--ok)", letterSpacing: "0.14em", textTransform: "uppercase" }}>Analyzing</span>
+                                </div>
+                            </div>
+
+                            {/* Scan line */}
+                            <div className="scan-line" />
+
+                            {/* Messages */}
+                            <div className="p-5 flex flex-col gap-4 relative z-[2]">
+
+                                {/* Message A */}
+                                <div className="msg flex flex-col items-start gap-1.5">
+                                    <span className="eyebrow op-40 ml-9">Alex</span>
+                                    <div className="flex items-start gap-2.5">
+                                        <div className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-semibold text-white"
+                                            style={{ background: "linear-gradient(135deg, oklch(0.52 0.06 60), oklch(0.40 0.05 60))" }}>A</div>
+                                        <div className="relative">
+                                            <div className="msg-alex-bg rounded-xl rounded-tl-sm px-4 py-2.5" style={{ border: "1px solid var(--border)" }}>
+                                                <p className="op-80" style={{ fontSize: 13, lineHeight: 1.55, color: "var(--warm)" }}>
+                                                    I already told you, it&apos;s{" "}
+                                                    <span className="font-semibold" style={{ color: "var(--danger)" }}>not my fault</span>
+                                                    {" "}the project failed.
+                                                </p>
+                                            </div>
+                                            <div className="absolute -right-2 -top-3 pulse-danger">
+                                                <span className="chip-danger flex items-center gap-1">
+                                                    <Shield className="w-2.5 h-2.5" />
+                                                    Deflection
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Message B */}
+                                <div className="msg flex flex-col items-end gap-1.5">
+                                    <span className="eyebrow op-40 mr-9">Jordan</span>
+                                    <div className="flex items-start gap-2.5 justify-end">
+                                        <div className="relative">
+                                            <div className="px-4 py-2.5 rounded-xl rounded-tr-sm" style={{ background: "var(--accent)", color: "var(--accent-fg)" }}>
+                                                <p style={{ fontSize: 13, lineHeight: 1.55, fontWeight: 400 }}>
+                                                    Fine. What do <em>you</em> think we should do to move forward?
+                                                </p>
+                                            </div>
+                                            <div className="absolute -left-2 -top-3">
+                                                <span className="chip-ok">+Constructive</span>
+                                            </div>
+                                        </div>
+                                        <div className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-semibold text-white"
+                                            style={{ background: "linear-gradient(135deg, oklch(0.50 0.07 170), oklch(0.38 0.06 170))" }}>J</div>
+                                    </div>
+                                </div>
+
+                                {/* Message C */}
+                                <div className="msg flex flex-col items-start gap-1.5">
+                                    <span className="eyebrow op-40 ml-9">Alex</span>
+                                    <div className="flex items-start gap-2.5">
+                                        <div className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-semibold text-white"
+                                            style={{ background: "linear-gradient(135deg, oklch(0.52 0.06 60), oklch(0.40 0.05 60))" }}>A</div>
+                                        <div className="relative">
+                                            <div className="msg-alex-bg rounded-xl rounded-tl-sm px-4 py-2.5" style={{ border: "1px solid var(--border)" }}>
+                                                <p className="op-80" style={{ fontSize: 13, lineHeight: 1.55, color: "var(--warm)" }}>
+                                                    I{" "}
+                                                    <span className="font-semibold" style={{ color: "var(--accent)" }}>guess</span>
+                                                    {" "}we could revisit the timeline…{" "}
+                                                    <span className="font-semibold" style={{ color: "var(--accent)" }}>if you want.</span>
+                                                </p>
+                                            </div>
+                                            <div className="absolute -right-2 -top-3">
+                                                <span className="chip-warn">Passive</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Divider */}
+                                <div className="flex items-center gap-3 my-1">
+                                    <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
+                                    <span className="eyebrow op-40">AI Analysis</span>
+                                    <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
+                                </div>
+
+                                {/* Meters */}
+                                <div className="flex flex-col gap-2.5">
+                                    {[
+                                        { label: "Sentiment", val: 38, color: "var(--danger)", tag: "Tense" },
+                                        { label: "Health", val: 54, color: "var(--accent)", tag: "54/100" },
+                                        { label: "Balance", val: 62, color: "var(--ok)", tag: "Moderate" },
+                                    ].map(m => (
+                                        <div key={m.label} className="flex items-center gap-3">
+                                            <span className="font-mono op-40 flex-shrink-0" style={{ fontSize: 10, width: 60, color: "var(--dim)" }}>{m.label}</span>
+                                            <div className="flex-1 h-1 rounded-full meter-track">
+                                                <div className="meter-fill rounded-full" style={{ width: `${m.val}%`, background: m.color, opacity: 0.75 }} />
+                                            </div>
+                                            <span className="font-mono op-60 flex-shrink-0" style={{ fontSize: 10, width: 52, textAlign: "right", color: m.color }}>{m.tag}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Red flag chips */}
+                                <div className="flex gap-1.5 flex-wrap mt-1">
+                                    {["Blame-shifting", "Passiveness", "Evasion"].map(t => (
+                                        <span key={t} className="chip-danger">{t}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Floating — score pill */}
+                        <div className="drift absolute -bottom-5 -left-5 grain rounded-xl px-4 py-3 hidden sm:flex flex-col gap-0.5 feature-card"
+                            style={{ boxShadow: "var(--shadow-float)" }}>
+                            <span className="eyebrow op-40">Overall Score</span>
+                            <div className="flex items-baseline gap-1 mt-1">
+                                <span className="font-display" style={{ fontSize: "2rem", lineHeight: 1, color: "var(--warm)" }}>54</span>
+                                <span className="op-25 font-mono" style={{ fontSize: 10, color: "var(--warm)" }}>/100</span>
+                            </div>
+                            <span className="font-mono" style={{ fontSize: 10, color: "var(--accent)", letterSpacing: "0.10em", textTransform: "uppercase" }}>Needs attention</span>
+                        </div>
+
+                        {/* Floating — messages pill */}
+                        <div className="absolute -top-4 -right-4 grain rounded-xl px-4 py-3 hidden sm:flex items-center gap-3 feature-card"
+                            style={{ boxShadow: "var(--shadow-float)" }}>
+                            <div className="w-7 h-7 rounded-full flex items-center justify-center"
+                                style={{ background: "color-mix(in oklch, var(--accent) 10%, transparent)" }}>
+                                <Activity className="w-3.5 h-3.5" style={{ color: "var(--accent)" }} />
+                            </div>
+                            <div>
+                                <span className="eyebrow op-40 block mb-0.5">Scanned</span>
+                                <span className="font-display" style={{ fontSize: "1.1rem", color: "var(--warm)" }}>47 msgs</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="features" className="pb-32">
+
+                    <div className="section-divider mb-20">
+                        <div className="line" />
+                        <div className="flex items-center gap-3">
+                            <span className="eyebrow">What you get</span>
+                        </div>
+                        <div className="line" />
+                    </div>
+
+                    {/* Strip 1 — Tone & Sentiment */}
+                    <div className="feature-strip py-16 flex flex-col md:flex-row items-center gap-12 md:gap-20">
+                        <div className="w-full md:w-[42%] flex-shrink-0">
+                            <div className="grain rounded-2xl p-6 relative overflow-hidden feature-card">
+                                <div className="flex items-end gap-1 h-24 mb-5">
+                                    {[35, 55, 40, 70, 45, 80, 35, 60, 50, 75, 40, 65, 55, 45, 80, 60, 35, 70, 50, 55, 40, 65, 45, 75, 60].map((h, i) => (
+                                        <div key={i} className={`flex-1 rounded-sm transition-all duration-700 ${h > 65 ? 'wave-high' : h > 50 ? 'wave-mid' : 'wave-low'}`}
+                                            style={{ height: `${h}%`, opacity: 0.7 + (i % 3) * 0.1 }} />
+                                    ))}
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-mono op-40" style={{ fontSize: 10, color: "var(--dim)" }}>msg #1</span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full" style={{ background: "var(--danger)" }} />
+                                        <span className="font-mono" style={{ fontSize: 10, color: "var(--danger)" }}>Tense</span>
+                                    </div>
+                                    <span className="font-mono op-40" style={{ fontSize: 10, color: "var(--dim)" }}>msg #47</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-5">
+                            <div className="flex items-center gap-3">
+                                <span className="feat-num">01</span>
+                                <span className="rule" style={{ width: 20, opacity: 0.4 }} />
+                                <span className="eyebrow" style={{ color: "var(--accent)" }}>Tone &amp; Sentiment</span>
+                            </div>
+                            <h2 className="font-display op-90" style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", lineHeight: 1.15, letterSpacing: "-0.01em", color: "var(--warm)" }}>
+                                Feel the room,<br /><em>message by message.</em>
+                            </h2>
+                            <p className="op-50" style={{ fontSize: "0.9375rem", lineHeight: 1.72, fontWeight: 300, maxWidth: "24rem", color: "var(--warm)" }}>
+                                Every exchange carries an emotional charge. We map the full arc — from the first message to the last — so you see exactly when the temperature shifted.
+                            </p>
+                            <div className="flex flex-wrap gap-x-5 gap-y-1.5">
+                                {["Per-message mapping", "Emotional arc timeline", "Positive · Negative · Neutral"].map(t => (
+                                    <span key={t} className="font-mono op-40" style={{ fontSize: 11, color: "var(--dim)" }}>{t}</span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Strip 2 — Red Flag Detection */}
+                    <div className="feature-strip py-16 flex flex-col md:flex-row-reverse items-center gap-12 md:gap-20">
+                        <div className="w-full md:w-[42%] flex-shrink-0">
+                            <div className="grain rounded-2xl p-5 flex flex-col gap-4 relative overflow-hidden feature-card">
+                                {[
+                                    { text: "It's not like I had a choice, you know.", tag: "Victimhood", type: "danger" },
+                                    { text: "You always do this to me.", tag: "Blame-shifting", type: "danger" },
+                                    { text: "Fine. Whatever you think is best.", tag: "Passive aggression", type: "warn" },
+                                ].map((m, i) => (
+                                    <div key={i} className="flex items-start gap-3">
+                                        <div className="mt-1.5 w-1 h-1 rounded-full flex-shrink-0"
+                                            style={{ background: m.type === "danger" ? "var(--danger)" : "var(--accent)" }} />
+                                        <div className="flex-1">
+                                            <p className="op-70 mb-1.5" style={{ fontSize: 13, lineHeight: 1.5, color: "var(--warm)" }}>{m.text}</p>
+                                            <span className={m.type === "danger" ? "chip-danger" : "chip-warn"}>{m.tag}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                                <div className="pt-3 flex items-center justify-between" style={{ borderTop: "1px solid var(--border)" }}>
+                                    <span className="font-mono op-40" style={{ fontSize: 10, color: "var(--dim)" }}>3 flags detected</span>
+                                    <div className="flex gap-1">
+                                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--danger)" }} />
+                                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--danger)" }} />
+                                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--accent)" }} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-5">
+                            <div className="flex items-center gap-3">
+                                <span className="feat-num">02</span>
+                                <span className="rule" style={{ width: 20, background: "var(--danger)", opacity: 0.5 }} />
+                                <span className="eyebrow" style={{ color: "var(--danger)" }}>Red Flag Detection</span>
+                            </div>
+                            <h2 className="font-display op-90" style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", lineHeight: 1.15, letterSpacing: "-0.01em", color: "var(--warm)" }}>
+                                Patterns hiding<br /><em>in plain sight.</em>
+                            </h2>
+                            <p className="op-50" style={{ fontSize: "0.9375rem", lineHeight: 1.72, fontWeight: 300, maxWidth: "24rem", color: "var(--warm)" }}>
+                                Gaslighting, deflection, passive aggression — they hide in ordinary-sounding sentences. Our model names them precisely, down to the exact phrase.
+                            </p>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                                {["Gaslighting", "Deflection", "Victimhood", "Manipulation", "Evasion"].map(t => (
+                                    <span key={t} className="chip-danger">{t}</span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Strip 3 — Health Scoring */}
+                    <div className="feature-strip py-16 flex flex-col md:flex-row items-center gap-12 md:gap-20" style={{ borderBottom: "1px solid var(--border)" }}>
+                        <div className="w-full md:w-[42%] flex-shrink-0">
+                            <div className="grain rounded-2xl p-6 relative overflow-hidden feature-card">
+                                <div className="flex items-center justify-center mb-5">
+                                    <div className="relative">
+                                        <svg viewBox="0 0 120 80" className="w-48 h-32">
+                                            <path d="M 15 70 A 52 52 0 0 1 105 70" stroke="currentColor" strokeOpacity="0.08" strokeWidth="10" fill="none" strokeLinecap="round" />
+                                            <path d="M 15 70 A 52 52 0 0 1 105 70" stroke="url(#gauge-grad)" strokeWidth="10" fill="none" strokeLinecap="round"
+                                                strokeDasharray="163.4" strokeDashoffset="75" />
+                                            <defs>
+                                                <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                    <stop offset="0%" stopColor="oklch(0.58 0.18 25)" />
+                                                    <stop offset="50%" stopColor="oklch(0.63 0.13 39)" />
+                                                    <stop offset="100%" stopColor="oklch(0.55 0.12 155)" />
+                                                </linearGradient>
+                                            </defs>
+                                        </svg>
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center mt-3">
+                                            <span className="font-display" style={{ fontSize: "2.5rem", lineHeight: 1, color: "var(--warm)" }}>54</span>
+                                            <span className="font-mono op-25" style={{ fontSize: 10, color: "var(--warm)" }}>/ 100</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {[
+                                        { label: "Cooperation", val: "48%" },
+                                        { label: "Clarity", val: "61%" },
+                                        { label: "Balance", val: "53%" },
+                                    ].map(m => (
+                                        <div key={m.label} className="text-center">
+                                            <div className="font-display op-80" style={{ fontSize: "1.1rem", color: "var(--warm)" }}>{m.val}</div>
+                                            <div className="font-mono op-30" style={{ fontSize: 9, letterSpacing: "0.10em", textTransform: "uppercase", color: "var(--dim)" }}>{m.label}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-5">
+                            <div className="flex items-center gap-3">
+                                <span className="feat-num">03</span>
+                                <span className="rule" style={{ width: 20, background: "var(--ok)", opacity: 0.5 }} />
+                                <span className="eyebrow" style={{ color: "var(--ok)" }}>Health Scoring</span>
+                            </div>
+                            <h2 className="font-display op-90" style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", lineHeight: 1.15, letterSpacing: "-0.01em", color: "var(--warm)" }}>
+                                One number.<br /><em>Complete clarity.</em>
+                            </h2>
+                            <p className="op-50" style={{ fontSize: "0.9375rem", lineHeight: 1.72, fontWeight: 300, maxWidth: "24rem", color: "var(--warm)" }}>
+                                We collapse the complexity of an entire conversation — cooperation, constructiveness, mutual respect — into a single score from 0 to 100.
+                            </p>
+                            <div className="flex items-center gap-3">
+                                <div className="flex-1 h-1 rounded-full overflow-hidden meter-track">
+                                    <div className="h-full rounded-full health-bar" style={{ width: "54%" }} />
+                                </div>
+                                <span className="font-mono op-40" style={{ fontSize: 11, color: "var(--dim)" }}>54 / 100</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* ══════════════════════════════════════
+            CTA STRIP
+        ══════════════════════════════════════ */}
+                <section className="pb-32 flex flex-col items-center text-center gap-8">
+                    <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 op-40" style={{ color: "var(--accent)" }} />
+                        <span className="eyebrow">Get started in seconds</span>
+                    </div>
+                    <h2 className="font-display op-90" style={{ fontSize: "clamp(2.2rem, 5vw, 3.8rem)", lineHeight: 1.1, letterSpacing: "-0.02em", maxWidth: "16ch", color: "var(--warm)" }}>
+                        Your conversations deserve<br /><em style={{ color: "var(--accent)" }}>honest analysis.</em>
+                    </h2>
+                    <p className="op-40" style={{ fontSize: "0.9375rem", lineHeight: 1.72, fontWeight: 300, maxWidth: "26rem", color: "var(--warm)" }}>
+                        Paste a chat or upload a file. Results in under a minute — no setup required.
+                    </p>
+                    <Link href="/sign-up">
+                        <button className="btn-primary rounded-full px-9 py-4 text-[14px] font-semibold flex items-center gap-2 cursor-pointer">
+                            Analyze your first conversation
+                            <ArrowUpRight className="w-4 h-4" />
+                        </button>
+                    </Link>
+                </section>
+            </main>
+
+            {/* ══════════════════════════════════════
+          FOOTER
+      ══════════════════════════════════════ */}
+            <Footer />
         </div>
-
-        {/* ── FEATURES — Editorial Alternating Strips ───────── */}
-        <div className="mt-32 w-full flex flex-col">
-
-          {/* Divider label */}
-          <div className="flex items-center gap-4 mb-16">
-            <div className="flex-1 h-px bg-zinc-200/70 dark:bg-zinc-800/70" />
-            <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-zinc-400 dark:text-zinc-600">What you get</span>
-            <div className="flex-1 h-px bg-zinc-200/70 dark:bg-zinc-800/70" />
-          </div>
-
-          {/* ── STRIP 1: Tone & Sentiment ── */}
-          <div className="group flex flex-col md:flex-row items-center gap-10 md:gap-16 py-14 border-t border-zinc-200/60 dark:border-zinc-800/60 hover:border-zinc-300/80 dark:hover:border-zinc-700/80 transition-colors">
-            {/* Visual: Sentiment wave + emoji spectrum */}
-            <div className="w-full md:w-[45%] flex-shrink-0 flex items-center justify-center">
-              <div className="relative w-full max-w-sm h-44 rounded-2xl overflow-hidden bg-gradient-to-br from-indigo-50 to-white dark:from-zinc-900 dark:to-zinc-950 border border-zinc-200/50 dark:border-zinc-800/50 shadow-inner">
-                {/* Sentiment gradient bar */}
-                <div className="absolute bottom-8 left-6 right-6 h-3 rounded-full overflow-hidden" style={{ background: "linear-gradient(to right, #ef4444, #f97316, #facc15, #84cc16, #22c55e)" }}>
-                  {/* Cursor dot */}
-                  <div className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white shadow-lg border-2 border-zinc-300 dark:border-zinc-600 transition-all" style={{ left: "38%", marginLeft: "-10px" }} />
-                </div>
-                {/* Labels */}
-                <div className="absolute bottom-2.5 left-6 text-[10px] text-zinc-400 font-medium">Negative</div>
-                <div className="absolute bottom-2.5 right-6 text-[10px] text-zinc-400 font-medium">Positive</div>
-                {/* Wave SVG */}
-                <svg className="absolute top-0 left-0 w-full h-28 opacity-20 dark:opacity-10" viewBox="0 0 360 80" preserveAspectRatio="none">
-                  <path d="M0 50 C30 20, 60 70, 90 40 S150 10, 180 45 S240 70, 270 35 S330 55, 360 30" stroke="#6366f1" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
-                  <path d="M0 55 C30 30, 60 65, 90 48 S150 25, 180 52 S240 65, 270 42 S330 58, 360 38" stroke="#a5b4fc" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.5"/>
-                </svg>
-                {/* Tone tags floating above bar */}
-                <div className="absolute top-5 left-0 right-0 flex justify-around px-4">
-                  {[
-                    { label: "Hostile", color: "bg-rose-100 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400" },
-                    { label: "Tense", color: "bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400" },
-                    { label: "Neutral", color: "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400" },
-                    { label: "Warm", color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400" },
-                  ].map((t) => (
-                    <span key={t.label} className={`px-2.5 py-1 rounded-full text-[10px] font-semibold border border-white/60 dark:border-zinc-700/40 shadow-sm ${t.color}`}>{t.label}</span>
-                  ))}
-                </div>
-                {/* Current reading */}
-                <div className="absolute top-[52px] left-1/2 -translate-x-1/2 text-center">
-                  <div className="text-[11px] font-semibold text-zinc-400 uppercase tracking-widest">Current reading</div>
-                  <div className="font-display text-2xl text-amber-600 dark:text-amber-400 mt-0.5">Tense</div>
-                </div>
-              </div>
-            </div>
-            {/* Copy */}
-            <div className="flex flex-col gap-3 md:gap-4">
-              <div className="flex items-center gap-3">
-                <span className="font-display text-[13px] text-zinc-300 dark:text-zinc-700 select-none">01</span>
-                <div className="h-px w-8 bg-indigo-400/50" />
-                <span className="text-[11px] font-semibold tracking-widest uppercase text-indigo-500 dark:text-indigo-400">Tone & Sentiment</span>
-              </div>
-              <h2 className="font-display text-4xl md:text-5xl leading-tight text-zinc-900 dark:text-white">
-                Feel the room,<br /><em>message by message.</em>
-              </h2>
-              <p className="text-zinc-500 dark:text-zinc-400 text-[15px] leading-relaxed font-light max-w-md">
-                Every exchange carries an emotional charge. We map the full arc — from the first message to the last — so you see exactly when the temperature shifted and why.
-              </p>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {["Positive · Negative · Neutral", "Per-message mapping", "Emotional arc timeline"].map(t => (
-                  <span key={t} className="text-[12px] text-zinc-500 dark:text-zinc-500 font-medium">{t}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* ── STRIP 2: Red Flag Detection ── (reversed) */}
-          <div className="group flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16 py-14 border-t border-zinc-200/60 dark:border-zinc-800/60 hover:border-zinc-300/80 dark:hover:border-zinc-700/80 transition-colors">
-            {/* Visual: message with flag overlays */}
-            <div className="w-full md:w-[45%] flex-shrink-0 flex items-center justify-center">
-              <div className="relative w-full max-w-sm rounded-2xl overflow-hidden bg-gradient-to-br from-rose-50 to-white dark:from-zinc-900 dark:to-zinc-950 border border-zinc-200/50 dark:border-zinc-800/50 shadow-inner p-5 flex flex-col gap-3">
-                {[
-                  { text: "It's not like I had a choice, you know.", tag: "Victimhood", color: "rose" },
-                  { text: "You always do this to me.", tag: "Blame-shifting", color: "rose" },
-                  { text: "Fine. Whatever you think is best.", tag: "Passive aggression", color: "amber" },
-                ].map((m, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${m.color === "rose" ? "bg-rose-400" : "bg-amber-400"}`} />
-                    <div className="flex-1">
-                      <p className="text-[13px] text-zinc-700 dark:text-zinc-300 leading-snug mb-1">{m.text}</p>
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                        m.color === "rose"
-                          ? "bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border-rose-200/60 dark:border-rose-800/60"
-                          : "bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border-amber-200/60 dark:border-amber-800/60"
-                      }`}>
-                        <ShieldAlert className="w-2.5 h-2.5" />
-                        {m.tag}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-                {/* Summary strip */}
-                <div className="mt-2 pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60 flex items-center justify-between">
-                  <span className="text-[11px] text-zinc-400 font-medium">3 flags detected</span>
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 rounded-full bg-rose-400" />
-                    <span className="w-2 h-2 rounded-full bg-rose-400" />
-                    <span className="w-2 h-2 rounded-full bg-amber-400" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Copy */}
-            <div className="flex flex-col gap-3 md:gap-4">
-              <div className="flex items-center gap-3">
-                <span className="font-display text-[13px] text-zinc-300 dark:text-zinc-700 select-none">02</span>
-                <div className="h-px w-8 bg-rose-400/50" />
-                <span className="text-[11px] font-semibold tracking-widest uppercase text-rose-500 dark:text-rose-400">Red Flag Detection</span>
-              </div>
-              <h2 className="font-display text-4xl md:text-5xl leading-tight text-zinc-900 dark:text-white">
-                The patterns<br /><em>hiding in plain sight.</em>
-              </h2>
-              <p className="text-zinc-500 dark:text-zinc-400 text-[15px] leading-relaxed font-light max-w-md">
-                Gaslighting, deflection, passive aggression — they hide in ordinary-sounding sentences. Our model names them precisely, down to the exact phrase that set it off.
-              </p>
-              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-                {["Gaslighting", "Deflection", "Victimhood", "Manipulation", "Evasion"].map(t => (
-                  <span key={t} className="text-[12px] text-rose-400/70 dark:text-rose-600/70 font-medium">{t}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* ── STRIP 3: Health Scoring ── */}
-          <div className="group flex flex-col md:flex-row items-center gap-10 md:gap-16 py-14 border-t border-b border-zinc-200/60 dark:border-zinc-800/60 hover:border-zinc-300/80 dark:hover:border-zinc-700/80 transition-colors">
-            {/* Visual: big score dial */}
-            <div className="w-full md:w-[45%] flex-shrink-0 flex items-center justify-center">
-              <div className="relative w-full max-w-sm h-48 flex items-center justify-center rounded-2xl bg-gradient-to-br from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950 border border-zinc-200/50 dark:border-zinc-800/50 shadow-inner overflow-hidden">
-                {/* Arc gauge SVG */}
-                <svg viewBox="0 0 200 120" className="absolute bottom-0 w-[280px]">
-                  {/* Track */}
-                  <path d="M 20 110 A 80 80 0 0 1 180 110" stroke="#e5e7eb" strokeWidth="14" fill="none" strokeLinecap="round" className="dark:stroke-zinc-800" />
-                  {/* Fill — 54% */}
-                  <path d="M 20 110 A 80 80 0 0 1 180 110" stroke="url(#scoreGrad)" strokeWidth="14" fill="none" strokeLinecap="round"
-                    strokeDasharray="251.2" strokeDashoffset="115.6" />
-                  <defs>
-                    <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#f87171" />
-                      <stop offset="50%" stopColor="#facc15" />
-                      <stop offset="100%" stopColor="#22c55e" />
-                    </linearGradient>
-                  </defs>
-                  {/* Needle dot */}
-                  <circle cx="103" cy="32" r="6" fill="#facc15" className="drop-shadow" />
-                </svg>
-                {/* Score number */}
-                <div className="relative z-10 text-center mt-6">
-                  <div className="font-display text-6xl text-zinc-900 dark:text-white leading-none">54</div>
-                  <div className="text-[12px] text-zinc-400 font-medium mt-1">out of 100</div>
-                  <div className="mt-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 text-[11px] font-bold inline-block">Needs attention</div>
-                </div>
-                {/* Side labels */}
-                <span className="absolute bottom-5 left-8 text-[10px] text-zinc-400 font-medium">Poor</span>
-                <span className="absolute bottom-5 right-8 text-[10px] text-zinc-400 font-medium">Healthy</span>
-                {/* Sub-metrics row */}
-                <div className="absolute top-4 left-0 right-0 flex justify-center gap-4">
-                  {[
-                    { label: "Cooperation", val: "48%" },
-                    { label: "Clarity", val: "61%" },
-                    { label: "Balance", val: "53%" },
-                  ].map(m => (
-                    <div key={m.label} className="flex flex-col items-center gap-0.5">
-                      <span className="font-display text-base text-zinc-700 dark:text-zinc-300">{m.val}</span>
-                      <span className="text-[9px] text-zinc-400 uppercase tracking-wide">{m.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            {/* Copy */}
-            <div className="flex flex-col gap-3 md:gap-4">
-              <div className="flex items-center gap-3">
-                <span className="font-display text-[13px] text-zinc-300 dark:text-zinc-700 select-none">03</span>
-                <div className="h-px w-8 bg-emerald-400/50" />
-                <span className="text-[11px] font-semibold tracking-widest uppercase text-emerald-500 dark:text-emerald-400">Health Scoring</span>
-              </div>
-              <h2 className="font-display text-4xl md:text-5xl leading-tight text-zinc-900 dark:text-white">
-                One number.<br /><em>Complete clarity.</em>
-              </h2>
-              <p className="text-zinc-500 dark:text-zinc-400 text-[15px] leading-relaxed font-light max-w-md">
-                We collapse the complexity of an entire conversation — cooperation, constructiveness, and mutual respect — into a single score from 0 to 100. No interpretation required.
-              </p>
-              <div className="flex items-center gap-3 mt-1">
-                <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                  <div className="h-full rounded-full" style={{ width: "54%", background: "linear-gradient(to right, #f87171, #facc15, #22c55e)" }} />
-                </div>
-                <span className="text-[12px] text-zinc-400 font-medium">54 / 100</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </main>
-    </div>
-  );
+    );
 }
